@@ -3,13 +3,18 @@
 # Start the timer
 start_time=$(date +%s)
 
+if [ -z "$ORACLE_PWD" ]; then
+    echo "ORACLE_PWD is not set. Exiting..."
+    exit 1
+fi
+
 # Get APEX
 curl -o apex-latest.zip https://download.oracle.com/otn_software/apex/apex-latest.zip
 
 # Enter APEX Folder
 unzip -q apex-latest.zip
 rm apex-latest.zip
-cd apex
+cd apex || exit 2
 
 # Install APEX
 sqlplus / as sysdba <<EOF
@@ -22,7 +27,7 @@ EOF
 sqlplus / as sysdba <<EOF
 ALTER SESSION SET CONTAINER = FREEPDB1;
 ALTER USER APEX_PUBLIC_USER ACCOUNT UNLOCK;
-ALTER USER APEX_PUBLIC_USER IDENTIFIED BY E;
+ALTER USER APEX_PUBLIC_USER IDENTIFIED BY '${ORACLE_PWD}';
 EXIT;
 EOF
 
@@ -33,9 +38,9 @@ BEGIN
     APEX_UTIL.set_security_group_id( 10 );
     
     APEX_UTIL.create_user(
-        p_user_name       => 'ADMIN',
-        p_email_address   => 'me@example.com',
-        p_web_password    => 'OrclAPEX1999!',
+        p_user_name       => '${APEX_USER}',
+        p_email_address   => '${APEX_EMAIL}',
+        p_web_password    => '${APEX_PASSWORD}',
         p_developer_privs => 'ADMIN' );
         
     APEX_UTIL.set_security_group_id( null );
@@ -101,8 +106,8 @@ ords --config \${ORDS_CONFIG} install \
      --gateway-mode proxied \
      --gateway-user APEX_PUBLIC_USER \
      --password-stdin <<EOT
-E
-E
+${ORACLE_PWD}
+${ORACLE_PWD}
 EOT
 EOF
 

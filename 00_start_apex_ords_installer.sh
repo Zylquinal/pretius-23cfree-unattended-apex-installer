@@ -1,0 +1,1 @@
+sh /home/oracle/unattended_apex_install_23c.sh 2>&1 | tee /home/oracle/unattended_apex_install_23c.log

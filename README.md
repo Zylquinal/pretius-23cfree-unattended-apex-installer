@@ -1,21 +1,29 @@
-# About this Repository
-This repository contains shell scripts designed to automate the manual process detailed in the [Oracle 23c Free Docker, APEX & ORDS – all in one simple guide](https://pretius.com/blog/oracle-apex-docker-ords/) for installing the latest versions of:
+# How to run
 
-- Oracle APEX 
-- Oracle REST Data Services (ORDS)
+```bash
+git https://github.com/Zylquinal/pretius-23cfree-unattended-apex-installer
+docker build -t oracle .
+docker run -it --name oracle-db -p 5500:5500 -p 8080:8080 -p 8443:8443 -p 22:22 -e ORACLE_PWD=oracle oracle
+```
+After running, wait until the installation is complete. You could wait until `### APEX INSTALLED ###` is shown in the logs.
 
-These scripts are intended for use with the Official Oracle 23c Image, available [from the Oracle Container Registry](https://container-registry.oracle.com/).
+# Credentials
 
+You can change the credentials by specifying it when running the docker container:
 
-# Instructions
-The steps to use the script can be found on the [Single Step Oracle 23c DB + APEX Docker Container](https://mattmulvaney.hashnode.dev/single-step-oracle-23c-db-apex-docker-container) blog.
+```bash
+docker run -it --name oracle-db -p 5500:5500 -p 8080:8080 -p 8443:8443 -p 22:22 -e ORACLE_PWD=oracle -e APEX_USER=admin -e APEX_PASSWORD=OracleDB2024! -e APEX_EMAIL=admin@localhost oracle
+```
 
-# Addtional Software Installed
+```Dockerfile
+ENV APEX_USER="admin"
+ENV APEX_PASSWORD="OracleDB2024!"
+ENV APEX_EMAIL="admin@localhost"
+```
 
-- Sudo
-- Nano
-- OpenJDK Java 17
+# How to connect
 
-# Contributions
-Contributions to this repository are encouraged
-
+- **Database**: `localhost:5500`
+- **ORDS**: http://localhost:8080/ords
+- **APEX**: http://localhost:8080/ords/apex
+- **SSH**: `localhost:22`
